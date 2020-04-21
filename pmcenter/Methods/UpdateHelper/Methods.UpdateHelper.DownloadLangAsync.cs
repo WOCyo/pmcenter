@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.IO.Compression;
 using System.Threading.Tasks;
 using static pmcenter.Methods.H2Helper;
+using static pmcenter.Methods.Logging;
 
 namespace pmcenter
 {
-    public partial class Methods
+    public static partial class Methods
     {
         public static partial class UpdateHelper
         {

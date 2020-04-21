@@ -1,10 +1,10 @@
 namespace pmcenter
 {
-    public partial class Methods
+    public static partial class Methods
     {
-        public static bool FlipBool(bool Input)
+        public static bool FlipBool(bool input)
         {
-            return Input ? false : true;
+            return input ? false : true;
         }
     }
 }

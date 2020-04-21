@@ -14,9 +14,9 @@ using Telegram.Bot.Types.Enums;
 
 namespace pmcenter
 {
-    public class Setup
+    public static class Setup
     {
-        private static Conf.ConfObj NewConf = new Conf.ConfObj();
+        private static readonly Conf.ConfObj NewConf = new Conf.ConfObj();
         private static TelegramBotClient TestBot;
         private static bool IsUIDReceived = false;
         private static long ReceivedUID = -1;
@@ -34,19 +34,19 @@ namespace pmcenter
             }
         }
 
-        private static void Say(string Input)
+        private static void Say(string input)
         {
-            Console.WriteLine(Input);
+            Console.WriteLine(input);
         }
-        private static void SIn(string Input)
+        private static void SIn(string input)
         {
-            Console.Write(Input);
+            Console.Write(input);
         }
         public static async Task SetupWizard()
         {
             Say(":) Welcome!");
             Say("   This is the pmcenter setup wizard.");
-            Say($"   App version: {Vars.AppVer.ToString()}");
+            Say($"   App version: {Vars.AppVer}");
             Say("   Here to guide you through some *important* configurations of pmcenter.");
             SIn("=> Continue? [y/N]: ");
             if (Console.ReadLine().ToLower() != "y")
@@ -71,8 +71,8 @@ namespace pmcenter
             Say("   All major configurations have been set!");
             Say("");
             SIn("=> Save configurations? [Y/n]: ");
-            string Choice = Console.ReadLine();
-            if (Choice.ToLower() != "n")
+            var choice = Console.ReadLine();
+            if (choice.ToLower() != "n")
             {
                 if (File.Exists(Vars.ConfFile))
                 {
@@ -131,11 +131,11 @@ namespace pmcenter
             Say("");
         EnterKey:
             SIn("=> Enter your API Key: ");
-            string Key = Console.ReadLine();
-            SIn($".. Testing API Key: {Key}...");
+            string key = Console.ReadLine();
+            SIn($".. Testing API Key: {key}...");
             try
             {
-                TestBot = new TelegramBotClient(Key);
+                TestBot = new TelegramBotClient(key);
                 if (!await TestBot.TestApiAsync().ConfigureAwait(false))
                 {
                     throw (new ArgumentException("API Key is not valid."));
@@ -147,7 +147,7 @@ namespace pmcenter
                 Say($" Invalid API Key: {ex.Message}");
                 goto EnterKey;
             }
-            NewConf.APIKey = Key;
+            NewConf.APIKey = key;
             Say(" Done!");
         }
         private static async Task SetUID()
@@ -158,8 +158,8 @@ namespace pmcenter
             Say("");
         EnterUID:
             SIn("=> Enter your UID, or \"auto\" for automatic setup: ");
-            string UID = Console.ReadLine();
-            if (UID.ToLower() == "auto")
+            string uid = Console.ReadLine();
+            if (uid.ToLower() == "auto")
             {
                 Say(".. Preparing for automatic UID detection...");
                 TestBot.OnUpdate += OnUpdate;
@@ -179,9 +179,9 @@ namespace pmcenter
             {
                 try
                 {
-                    long NewUID = long.Parse(UID);
-                    SIn($".. Saving UID: {NewUID}...");
-                    NewConf.OwnerUID = NewUID;
+                    long newUid = long.Parse(uid);
+                    SIn($".. Saving UID: {newUid}...");
+                    NewConf.OwnerUID = newUid;
                     Say(" Done!");
                 }
                 catch (Exception ex)

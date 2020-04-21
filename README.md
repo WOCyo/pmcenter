@@ -1,6 +1,6 @@
 # pmcenter
 
-[![build status](https://ci.appveyor.com/api/projects/status/gmbdiackw0563980?svg=true)](https://ci.appveyor.com/project/Elepover/pmcenter) [![CodeFactor](https://www.codefactor.io/repository/github/elepover/pmcenter/badge)](https://www.codefactor.io/repository/github/elepover/pmcenter) [![telegram channel](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/pmcenter_devlog) ![license](https://img.shields.io/github/license/elepover/pmcenter.svg) ![language rank](https://img.shields.io/github/languages/top/elepover/pmcenter.svg?color=brightgreen) ![repo size in bytes](https://img.shields.io/github/repo-size/elepover/pmcenter.svg) ![environment](https://img.shields.io/badge/dotnet-v2.1-blue.svg) ![last commit](https://img.shields.io/github/last-commit/elepover/pmcenter.svg) ![status](https://img.shields.io/badge/status-maintaining-success.svg)
+[![build status](https://ci.appveyor.com/api/projects/status/gmbdiackw0563980?svg=true)](https://ci.appveyor.com/project/Elepover/pmcenter) [![CodeFactor](https://www.codefactor.io/repository/github/elepover/pmcenter/badge)](https://www.codefactor.io/repository/github/elepover/pmcenter) [![telegram channel](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/pmcenter_devlog) ![license](https://img.shields.io/github/license/elepover/pmcenter.svg) ![language rank](https://img.shields.io/github/languages/top/elepover/pmcenter.svg?color=brightgreen) ![repo size in bytes](https://img.shields.io/github/repo-size/elepover/pmcenter.svg) ![environment](https://img.shields.io/badge/dotnet-v3.1-blueviolet.svg) ![last commit](https://img.shields.io/github/last-commit/elepover/pmcenter.svg) ![status](https://img.shields.io/badge/status-maintaining-success.svg)
 
 A telegram bot helping you process private messages.
 
@@ -177,6 +177,7 @@ Or, use setup wizard:
 | `IgnoreKeyboardInterrupt` | `Boolean` | ✓ | Choose whether pmcenter should ignore Ctrl-C interrupts or not. |
 | `DisableNetCore3Check` | `Boolean` | ✓ | Turn this on to hide .NET Core Runtime version warnings. |
 | `Statistics` | `Stats` | ✕ | Statistics data. |
+| `IgnoredLogModules` | `Array` | ✓ | List of ignored log modules. Selected modules will not generate output to console. |
 | `Socks5Proxies` | `Array` | ✓ | List of SOCKS5 proxies. |
 | `BannedKeywords` | `Array` | ✓ | Storage of banned keywords. |
 | `Banned` | `Array` | ✓ | Storage of banned users. |

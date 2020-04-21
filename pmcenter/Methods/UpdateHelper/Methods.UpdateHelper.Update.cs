@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace pmcenter
 {
-    public partial class Methods
+    public static partial class Methods
     {
         public static partial class UpdateHelper
         {

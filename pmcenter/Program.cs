@@ -16,20 +16,23 @@ using static pmcenter.Conf;
 using static pmcenter.EventHandlers;
 using static pmcenter.Lang;
 using static pmcenter.Methods;
+using static pmcenter.Methods.Logging;
 
 namespace pmcenter
 {
-    public partial class Program
+    public sealed partial class Program
     {
         public static void Main(string[] args)
         {
             Vars.StartSW.Start();
             Console.WriteLine(Vars.ASCII);
             Log("Main delegator activated!", "DELEGATOR");
-            Log($"Starting pmcenter, version {Vars.AppVer.ToString()}. Channel: \"{Vars.CompileChannel}\"", "DELEGATOR");
-            var MainAsyncTask = MainAsync(args);
-            MainAsyncTask.Wait();
-            Log("Main worker accidentally exited. Stopping...", "DELEGATOR", LogLevel.ERROR);
+            Log($"Starting pmcenter, version {Vars.AppVer}. Channel: \"{Vars.CompileChannel}\"", "DELEGATOR");
+            if (Vars.GitHubReleases)
+                Log("This image of pmcenter is built for GitHub releases. Will use a different updating mechanism.", "DELEGATOR");
+            var mainAsyncTask = MainAsync(args);
+            mainAsyncTask.Wait();
+            Log("Main worker accidentally exited. Stopping...", "DELEGATOR", LogLevel.Error);
             Environment.Exit(1);
         }
         public static async Task MainAsync(string[] args)
@@ -46,37 +49,39 @@ namespace pmcenter
                 await CmdLineProcess.RunCommand(Environment.CommandLine).ConfigureAwait(false);
                 // everything (exits and/or errors) are handled above, please do not process.
                 // detect environment variables
-                // including: $pmcenter_conf, $pmcenter_lang
+                // including:
+                // $pmcenter_conf
+                // $pmcenter_lang
                 try
                 {
-                    var ConfByEnviVar = Environment.GetEnvironmentVariable("pmcenter_conf");
-                    var LangByEnviVar = Environment.GetEnvironmentVariable("pmcenter_lang");
-                    if (ConfByEnviVar != null)
+                    var confByEnvironmentVar = Environment.GetEnvironmentVariable("pmcenter_conf");
+                    var langByEnvironmentVar = Environment.GetEnvironmentVariable("pmcenter_lang");
+                    if (confByEnvironmentVar != null)
                     {
-                        if (File.Exists(ConfByEnviVar))
+                        if (File.Exists(confByEnvironmentVar))
                         {
-                            Vars.ConfFile = ConfByEnviVar;
+                            Vars.ConfFile = confByEnvironmentVar;
                         }
                         else
                         {
-                            Log($"==> The following file was not found: {ConfByEnviVar}", "CORE", LogLevel.INFO);
+                            Log($"==> The following file was not found: {confByEnvironmentVar}", "CORE", LogLevel.Info);
                         }
                     }
-                    if (LangByEnviVar != null)
+                    if (langByEnvironmentVar != null)
                     {
-                        if (File.Exists(LangByEnviVar))
+                        if (File.Exists(langByEnvironmentVar))
                         {
-                            Vars.LangFile = LangByEnviVar;
+                            Vars.LangFile = langByEnvironmentVar;
                         }
                         else
                         {
-                            Log($"==> The following file was not found: {LangByEnviVar}", "CORE", LogLevel.INFO);
+                            Log($"==> The following file was not found: {langByEnvironmentVar}", "CORE", LogLevel.Info);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log($"Failed to read environment variables: {ex.ToString()}", "CORE", LogLevel.WARN);
+                    Log($"Failed to read environment variables: {ex}", "CORE", LogLevel.Warning);
                 }
                 
                 Log($"==> Using configurations file: {Vars.ConfFile}");
@@ -98,9 +103,21 @@ namespace pmcenter
                 {
                     Log("This may be the first time that you use the pmcenter bot.", "CORE");
                     Log("Configuration guide could be found at https://see.wtf/feEJJ", "CORE");
-                    Log("Received restart requirement from settings system. Exiting...", "CORE", LogLevel.ERROR);
-                    Log("You may need to check your settings and try again.", "CORE", LogLevel.INFO);
+                    Log("Received restart requirement from settings system. Exiting...", "CORE", LogLevel.Error);
+                    Log("You may need to check your settings and try again.", "CORE", LogLevel.Info);
                     Environment.Exit(1);
+                }
+
+                // check if logs are being omitted
+                if (Vars.CurrentConf.IgnoredLogModules.Count > 0)
+                {
+                    var tmp = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("!!!!!!!!!! SOME LOG ENTRIES ARE HIDDEN ACCORDING TO CURRENT SETTINGS !!!!!!!!!!");
+                    Console.WriteLine("To revert this, clear the \"IgnoredLogModules\" field in pmcenter.json.");
+                    Console.WriteLine("To disable all log output, turn on \"LowPerformanceMode\".");
+                    Console.WriteLine("This warning will appear every time pmcenter starts up with \"IgnoredLogModules\" set.");
+                    Console.ForegroundColor = tmp;
                 }
 
                 Log("==> Initializing module - THREADS");
@@ -142,21 +159,21 @@ namespace pmcenter
                 if (Vars.CurrentConf.UseProxy)
                 {
                     Log("Activating SOCKS5 proxy...");
-                    List<ProxyInfo> ProxyInfoList = new List<ProxyInfo>();
-                    foreach (Socks5Proxy Info in Vars.CurrentConf.Socks5Proxies)
+                    List<ProxyInfo> proxyInfoList = new List<ProxyInfo>();
+                    foreach (var proxyInfo in Vars.CurrentConf.Socks5Proxies)
                     {
-                        ProxyInfo ProxyInfo = new ProxyInfo(Info.ServerName,
-                                                            Info.ServerPort,
-                                                            Info.Username,
-                                                            Info.ProxyPass);
-                        ProxyInfoList.Add(ProxyInfo);
+                        ProxyInfo ProxyInfo = new ProxyInfo(proxyInfo.ServerName,
+                                                            proxyInfo.ServerPort,
+                                                            proxyInfo.Username,
+                                                            proxyInfo.ProxyPass);
+                        proxyInfoList.Add(ProxyInfo);
                     }
-                    HttpToSocks5Proxy Proxy = new HttpToSocks5Proxy(ProxyInfoList.ToArray())
+                    var proxy = new HttpToSocks5Proxy(proxyInfoList.ToArray())
                     {
                         ResolveHostnamesLocally = Vars.CurrentConf.ResolveHostnamesLocally
                     };
                     Log("SOCKS5 proxy is enabled.");
-                    Vars.Bot = new TelegramBotClient(Vars.CurrentConf.APIKey, Proxy);
+                    Vars.Bot = new TelegramBotClient(Vars.CurrentConf.APIKey, proxy);
                 }
                 else
                 {
@@ -167,11 +184,16 @@ namespace pmcenter
                 Log("Hooking event processors...");
                 Vars.Bot.OnUpdate += BotProcess.OnUpdate;
                 Log("Starting receiving...");
-                Vars.Bot.StartReceiving(new[] { UpdateType.Message });
+                Vars.Bot.StartReceiving(new[]
+                {
+                    UpdateType.Message,
+                    UpdateType.CallbackQuery
+                });
                 Log("==> Startup complete!");
                 Log("==> Running post-start operations...");
                 try
                 {
+                    // prompt startup success
                     if (!Vars.CurrentConf.NoStartupMessage)
                     {
                         _ = await Vars.Bot.SendTextMessageAsync(Vars.CurrentConf.OwnerUID,
@@ -184,10 +206,11 @@ namespace pmcenter
                 }
                 catch (Exception ex)
                 {
-                    Log($"Failed to send startup message to owner.\nDid you set the \"OwnerID\" key correctly? Otherwise pmcenter could not work properly.\nYou can try to use setup wizard to update/get your OwnerID automatically, just run \"dotnet pmcenter.dll --setup\".\n\nError details: {ex.ToString()}", "BOT", LogLevel.WARN);
+                    Log($"Failed to send startup message to owner.\nDid you set the \"OwnerID\" key correctly? Otherwise pmcenter could not work properly.\nYou can try to use setup wizard to update/get your OwnerID automatically, just run \"dotnet pmcenter.dll --setup\".\n\nError details: {ex}", "BOT", LogLevel.Warning);
                 }
                 try
                 {
+                    // check .net core runtime version
                     var netCoreVersion = GetNetCoreVersion();
                     if (!CheckNetCoreVersion(netCoreVersion) && !Vars.CurrentConf.DisableNetCore3Check)
                     {
@@ -202,11 +225,12 @@ namespace pmcenter
                 }
                 catch (Exception ex)
                 {
-                    Log($".NET Core runtime version warning wasn't delivered to the owner: {ex.Message}, did you set the \"OwnerID\" key correctly?", "BOT", LogLevel.WARN);
+                    Log($".NET Core runtime version warning wasn't delivered to the owner: {ex.Message}, did you set the \"OwnerID\" key correctly?", "BOT", LogLevel.Warning);
                 }
+                // check language mismatch
                 if (Vars.CurrentLang.TargetVersion != Vars.AppVer.ToString())
                 {
-                    Log("Language version mismatch detected.", "CORE", LogLevel.WARN);
+                    Log("Language version mismatch detected.", "CORE", LogLevel.Warning);
                     _ = await Vars.Bot.SendTextMessageAsync(Vars.CurrentConf.OwnerUID,
                                                    Vars.CurrentLang.Message_LangVerMismatch
                                                        .Replace("$1", Vars.CurrentLang.TargetVersion)
@@ -217,25 +241,16 @@ namespace pmcenter
                 }
                 Log("==> All finished!");
                 if (Vars.ServiceMode)
-                {
                     while (true)
-                    {
                         Thread.Sleep(int.MaxValue);
-                    }
-                }
                 else
-                {
                     while (true)
-                    {
                         Console.ReadKey(true);
-                    }
-                }
-                
             }
             catch (Exception ex)
             {
                 CheckOpenSSLComp(ex);
-                Log($"Unexpected error during startup: {ex.ToString()}", "CORE", LogLevel.ERROR);
+                Log($"Unexpected error during startup: {ex}", "CORE", LogLevel.Error);
                 Environment.Exit(1);
             }
         }

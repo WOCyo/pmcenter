@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -9,7 +8,7 @@ using static pmcenter.Methods.H2Helper;
 
 namespace pmcenter.Commands
 {
-    internal class SwitchLangCommand : ICommand
+    internal class SwitchLangCommand : IBotCommand
     {
         public bool OwnerOnly => true;
 
@@ -28,12 +27,12 @@ namespace pmcenter.Commands
                 update.Message.MessageId).ConfigureAwait(false);
                 
             // download file
-            var LangURL = update.Message.Text.Split(" ")[1];
-            Vars.CurrentConf.LangURL = LangURL;
+            var langUrl = update.Message.Text.Split(" ")[1];
+            Vars.CurrentConf.LangURL = langUrl;
             // save conf
             _ = await Conf.SaveConf(isAutoSave: true);
             await DownloadFileAsync(
-                new Uri(LangURL),
+                new Uri(langUrl),
                 Path.Combine(Vars.AppDirectory, "pmcenter_locale.json")
             ).ConfigureAwait(false);
 

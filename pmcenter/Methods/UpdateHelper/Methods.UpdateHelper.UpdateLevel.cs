@@ -1,8 +1,8 @@
 namespace pmcenter
 {
-    public partial class Methods
+    public static partial class Methods
     {
-        public partial class UpdateHelper
+        public static partial class UpdateHelper
         {
             public enum UpdateLevel
             {

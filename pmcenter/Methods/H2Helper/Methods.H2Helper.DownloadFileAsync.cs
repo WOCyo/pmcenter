@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace pmcenter
 {
-    public partial class Methods
+    public static partial class Methods
     {
-        public partial class H2Helper
+        public static partial class H2Helper
         {
             public static async Task DownloadFileAsync(Uri uri, string filename)
             {

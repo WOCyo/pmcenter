@@ -1,12 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-
-using static pmcenter.Methods;
+﻿using System.Threading.Tasks;
+using static pmcenter.Methods.Logging;
 
 namespace pmcenter.CommandLines
 {
-    internal class NonServiceModeCmdLine : ICmdLine
+    internal class NonServiceModeCmdLine : ICommandLine
     {
         public string Prefix => "noservice";
         public bool ExitAfterExecution => false;

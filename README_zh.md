@@ -1,6 +1,6 @@
 # pmcenter
 
-[![build status](https://ci.appveyor.com/api/projects/status/gmbdiackw0563980?svg=true)](https://ci.appveyor.com/project/Elepover/pmcenter) [![CodeFactor](https://www.codefactor.io/repository/github/elepover/pmcenter/badge)](https://www.codefactor.io/repository/github/elepover/pmcenter) [![telegram channel](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/pmcenter_devlog) ![license](https://img.shields.io/github/license/elepover/pmcenter.svg) ![language rank](https://img.shields.io/github/languages/top/elepover/pmcenter.svg?color=brightgreen) ![repo size in bytes](https://img.shields.io/github/repo-size/elepover/pmcenter.svg) ![environment](https://img.shields.io/badge/dotnet-v2.1-blue.svg) ![last commit](https://img.shields.io/github/last-commit/elepover/pmcenter.svg) ![status](https://img.shields.io/badge/status-maintaining-success.svg)
+[![build status](https://ci.appveyor.com/api/projects/status/gmbdiackw0563980?svg=true)](https://ci.appveyor.com/project/Elepover/pmcenter) [![CodeFactor](https://www.codefactor.io/repository/github/elepover/pmcenter/badge)](https://www.codefactor.io/repository/github/elepover/pmcenter) [![telegram channel](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/pmcenter_devlog) ![license](https://img.shields.io/github/license/elepover/pmcenter.svg) ![language rank](https://img.shields.io/github/languages/top/elepover/pmcenter.svg?color=brightgreen) ![repo size in bytes](https://img.shields.io/github/repo-size/elepover/pmcenter.svg) ![environment](https://img.shields.io/badge/dotnet-v3.1-blueviolet.svg) ![last commit](https://img.shields.io/github/last-commit/elepover/pmcenter.svg) ![status](https://img.shields.io/badge/status-maintaining-success.svg)
 
 一个帮你处理私人聊天消息的 Telegram 机器人。
 
@@ -179,6 +179,7 @@ docker run -d -v $(pwd)/pmcenter.json:/opt/pmcenter/pmcenter.json --restart alwa
 | `IgnoreKeyboardInterrupt` | `Boolean` | ✓ | 是否忽略 Ctrl-C 中断 |
 | `DisableNetCore3Check` | `Boolean` | ✓ | 启用以忽略 .NET Core 运行时版本检查 |
 | `Statistics` | `Stats` | ✕ | 统计数据 |
+| `IgnoredLogModules` | `Array` | ✓ | 忽略的日志模块列表，这些模块将不会输出信息到控制台 |
 | `Socks5Proxies` | `Array` | ✓ | SOCKS5 代理列表 |
 | `BannedKeywords` | `Array` | ✓ | 屏蔽的关键字存储 |
 | `Banned` | `Array` | ✓ | 封禁用户存储 |

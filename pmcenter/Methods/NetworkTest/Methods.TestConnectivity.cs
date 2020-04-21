@@ -1,10 +1,11 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using static pmcenter.Methods.Logging;
 
 namespace pmcenter
 {
-    public partial class Methods
+    public static partial class Methods
     {
         public static async Task<bool> TestConnectivity(string target, bool ignore45 = false)
         {
@@ -18,7 +19,7 @@ namespace pmcenter
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError && ignore45) { return true; }
+                if (ex.Status == WebExceptionStatus.ProtocolError && ignore45) return true;
                 Log($"Connectivity to {target} is unavailable: {ex.Message}");
                 return false;
             }
