@@ -1,6 +1,6 @@
 # pmcenter
 
-[![build status](https://ci.appveyor.com/api/projects/status/gmbdiackw0563980?svg=true)](https://ci.appveyor.com/project/Elepover/pmcenter) [![CodeFactor](https://www.codefactor.io/repository/github/elepover/pmcenter/badge)](https://www.codefactor.io/repository/github/elepover/pmcenter) [![telegram channel](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/pmcenter_devlog) ![license](https://img.shields.io/github/license/elepover/pmcenter.svg) ![language rank](https://img.shields.io/github/languages/top/elepover/pmcenter.svg?color=brightgreen) ![repo size in bytes](https://img.shields.io/github/repo-size/elepover/pmcenter.svg) ![environment](https://img.shields.io/badge/dotnet-v2.1-blue.svg) ![last commit](https://img.shields.io/github/last-commit/elepover/pmcenter.svg) ![status](https://img.shields.io/badge/status-maintaining-success.svg)
+[![build status](https://ci.appveyor.com/api/projects/status/gmbdiackw0563980?svg=true)](https://ci.appveyor.com/project/Elepover/pmcenter) [![CodeFactor](https://www.codefactor.io/repository/github/elepover/pmcenter/badge)](https://www.codefactor.io/repository/github/elepover/pmcenter) [![telegram channel](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/pmcenter_devlog) ![license](https://img.shields.io/github/license/elepover/pmcenter.svg) ![language rank](https://img.shields.io/github/languages/top/elepover/pmcenter.svg?color=brightgreen) ![repo size in bytes](https://img.shields.io/github/repo-size/elepover/pmcenter.svg) ![environment](https://img.shields.io/badge/dotnet-v3.1-blueviolet.svg) ![last commit](https://img.shields.io/github/last-commit/elepover/pmcenter.svg) ![status](https://img.shields.io/badge/status-maintaining-success.svg)
 
 一个帮你处理私人聊天消息的 Telegram 机器人。
 
@@ -18,6 +18,7 @@
 >   - [⚙️ 环境要求](#环境要求)
 >   - [📥 自行编译 `pmcenter`](#自行编译-pmcenter)
 >   - [📩 使用 CI 预编译二进制文件](#使用-ci-预编译二进制文件)
+>   - [✅ ReadyToRun 版本](#readytorun-版本)
 >   - [🐋 使用 Docker](#使用-docker)
 > - [🔧 配置](#配置)
 >   - [⚒️ `pmcenter` 设置](#pmcenter-设置)
@@ -65,31 +66,19 @@
 
 ### 环境要求
 
-- Microsoft .NET Core (运行时 / SDK)
-- Git (可选，若下载 CI 编译二进制文件则不需要)
+- Microsoft .NET Core (运行时 / SDK，请参考下文说明)
+- Git (可选，请参考下文说明)
+- 好耶！还有 Docker 可以用！
 
-对于微软官方支持系统，请看[此处](https://see.wtf/XxTlf)；
+参考[微软官方说明](https://dotnet.microsoft.com/download/dotnet-core/3.1)以获取安装指导。
 
-对于非微软官方支持系统，请看[此处](https://see.wtf/sIjUZ)；
+许多 Linux 发行版均有 .NET Core SDK 软件包可用。
 
-Arch Linux 可直接安装 `dotnet-runtime` 包。
-
-树莓派:
-
-以 `root` 权限运行以下脚本:
-
-```bash
-apt-get install curl libunwind8 gettext
-curl -sSL -o dotnet.tar.gz https://download.microsoft.com/download/9/1/7/917308D9-6C92-4DA5-B4B1-B4A19451E2D2/dotnet-runtime-2.1.0-linux-arm.tar.gz
-mkdir -p /opt/dotnet && sudo tar zxf dotnet.tar.gz -C /opt/dotnet
-ln -s /opt/dotnet/dotnet /usr/local/bin
-rm dotnet.tar.gz
-dotnet --info
-```
+如果您的发行版并没有这个包，别慌，你还可以下载 .NET Core SDK 的二进制版本或者是使用 [R2R 版本](#readytorun-版本)的 pmcenter.
 
 ### 自行编译 `pmcenter`
 
-**您需要安装 .NET Core _SDK_ 及 _Runtime_ 才能完成此步。**
+**您需要安装 .NET Core SDK 才能完成此步。**
 
 运行此脚本来 clone, 编译及运行 `pmcenter`:
 
@@ -97,18 +86,24 @@ dotnet --info
 git clone https://github.com/Elepover/pmcenter.git --depth=1
 cd pmcenter/pmcenter
 dotnet restore
-dotnet publish --configuration Release
-cp -R bin/Release/netcoreapp2.1/publish ../
+dotnet publish -c Release
+cp -R bin/Release/netcoreapp3.1/publish ../
 cd .. && mv publish build
 cd build
 dotnet pmcenter.dll
 ```
 
+在 macOS 或 Linux，您也可以运行 `./pmcenter` 来直接启动 pmcenter.
+
+Windows 上，您也可以直接双击 pmcenter.exe 或者 `.\pmcenter.exe`.
+
+在启动时添加 `--setup` 选项以启动设置向导。
+
 编译好的二进制文件将放在您当前目录中的 `pmcenter/build` 文件夹里。
 
 ### 使用 CI 预编译二进制文件
 
-**本步骤中，仅需要 .NET Core _Runtime_ 即可。**
+**本步骤中，仅需要 .NET Core Runtime 即可。**
 
 运行此脚本来下载和运行 `pmcenter`:
 
@@ -120,13 +115,33 @@ unzip pmcenter.zip
 dotnet pmcenter.dll
 ```
 
+### ReadyToRun 版本
+
+这是另一种预编译好的二进制文件包，区别在于：您不需要安装额外的东西。
+
+更好的是，这样的编译方法启用了 AOT 编译，应当会有一些性能提升。
+
+缺点：暂时不支持自动更新。
+
+对于一些 Linux 发行版，您可能需要一些额外的库，请参阅[这篇微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/dependencies?tabs=netcore31&pivots=os-linux)。
+
+步骤：
+
+- 根据系统及其架构[下载对应的版本](https://github.com/Elepover/pmcenter/releases)
+- 解压
+- 运行 `./pmcenter` (macOS/Linux) 或者 `.\pmcenter.exe` (Windows) 就可以了
+
 ### 使用 Docker
 
 下方的命令将帮助您下载示例配置以供 docker 内的 pmcenter 使用。
 
+对于 `pmcenter-lazer`，请使用 `elep0ver/pmcenter:lazer` 镜像。
+
+对于 `pmcenter-lazer`，请使用 `elep0ver/pmcenter:lazer` 镜像
+
 ```bash
 wget https://raw.githubusercontent.com/Elepover/pmcenter/master/pmcenter.json
-vim pmcenter.json # 编辑配置
+vim pmcenter.json # 编辑配置（APIKey 与 OwnerID 为必要的）
 docker run -d -v $(pwd)/pmcenter.json:/opt/pmcenter/pmcenter.json --restart always elep0ver/pmcenter
 ```
 
@@ -144,6 +159,7 @@ docker run -d -v $(pwd)/pmcenter.json:/opt/pmcenter/pmcenter.json --restart alwa
 
 | 项目 | 类型 | 用户可编辑 | 描述 |
 | :---- | :---- | :---- | ----:|
+| `Minify` | `Boolean`| ✓ | 是否精简化 pmcenter 配置 |
 | `APIKey` | `String` | ✓ | 你的 Telegram 机器人 API 密钥 |
 | `OwnerID` | `Long` | ✓ | 使用者的 Telegram ID |
 | `EnableCc` | `Boolean` | ✓ | 是否启用 Cc 功能 |
@@ -178,7 +194,13 @@ docker run -d -v $(pwd)/pmcenter.json:/opt/pmcenter/pmcenter.json --restart alwa
 | `UpdateChannel` | `String` | ✓ | 选择更新频道 |
 | `IgnoreKeyboardInterrupt` | `Boolean` | ✓ | 是否忽略 Ctrl-C 中断 |
 | `DisableNetCore3Check` | `Boolean` | ✓ | 启用以忽略 .NET Core 运行时版本检查 |
+| `DisableMessageLinkTip` | `Boolean` | ✓ | 启用以忽略消息链接提示 |
+| `AnalyzeStartupTime` | `Boolean` | ✓ | 启用以显示细化的启动时间分析 |
+| `SkipAPIKeyVerification` | `Boolean` | ✓ | 启用以跳过启动时的 API 密钥校验 |
+| `EnableActions` | `Boolean` | ✓ | 启动以启用消息操作面版 |
+| `CheckLangVersionMismatch` | `Boolean` | ✓ | 在启动时检测语言文件版本 |
 | `Statistics` | `Stats` | ✕ | 统计数据 |
+| `IgnoredLogModules` | `Array` | ✓ | 忽略的日志模块列表，这些模块将不会输出信息到控制台 |
 | `Socks5Proxies` | `Array` | ✓ | SOCKS5 代理列表 |
 | `BannedKeywords` | `Array` | ✓ | 屏蔽的关键字存储 |
 | `Banned` | `Array` | ✓ | 封禁用户存储 |
@@ -202,7 +224,8 @@ docker run -d -v $(pwd)/pmcenter.json:/opt/pmcenter/pmcenter.json --restart alwa
 - 目前 `/info` 命令的回复尚且无法更改。
 - 欢迎 Pull Requests.
 - 切换中文语言包，只需发送 `/switchlang https://raw.githubusercontent.com/Elepover/pmcenter/master/locales/pmcenter_locale_zh.json`
-- 在启用 `EnableMsgLink` 前请三思：虽然此功能允许您回复匿名转发消息及频道消息，但 pmcenter 的存储和内存占用将随消息量增长而增加，并将拖慢 pmcenter 操作配置文件时的速度。
+- ~~在启用 `EnableMsgLink` 前请三思：虽然此功能允许您回复匿名转发消息及频道消息，但 pmcenter 的存储和内存占用将随消息量增长而增加，并将拖慢 pmcenter 操作配置文件时的速度。~~
+- 现在消息链接在 pmcenter 正常功能中起着重要作用，我们不推荐将其禁用。
 
 #### 改变文件位置
 
@@ -225,7 +248,9 @@ pmcenter_lang: pmcenter 语言文件路径。
 
 `dotnet pmcenter.dll`
 
-您也可以编写一个 `systemd 服务` 来保证其在主机重启后仍能保持运行。
+如果您是自行编译的 pmcenter，或是使用的 R2R 版本，您也可以使用 `./pmcenter` (macOS/Linux) 或者 `.\pmcenter.exe` 命令来启动 pmcenter.
+
+您也可以编写一个 systemd 服务来保证其在主机重启后仍能保持运行。
 
 ## 命令
 
@@ -249,6 +274,7 @@ pmcenter_lang: pmcenter 语言文件路径。
 | `/backup` | 所有者 | 备份配置文件 |
 | `/editconf <CONF>` | 所有者 | 手动保存 JSON 格式的配置及翻译 |
 | `/saveconf` | 所有者 | 手动保存配置及翻译，可用于更新后补齐缺少的配置项 |
+| `/autosave [off/时间间隔]` | 所有者 | 启用或停用自动保存，时间间隔单位为毫秒（1/1000 秒） |
 | `/readconf` | 所有者 | 在不重启机器人的情况下，重新载入配置 |
 | `/resetconf` | 所有者 | 重置配置文件 |
 | `/uptime` | 所有者 | 获取系统在线时间信息 |
@@ -292,17 +318,11 @@ System.Net.Http.HttpRequestException: The SSL connection could not be establishe
 
 ## 常见问题
 
-### 为什么 pmcenter 的目标框架仍然是 .NET Core 2.1?
-
-根据 [.NET Core 支持政策](https://dotnet.microsoft.com/platform/support/policy/dotnet-core)，.NET Core 2.2 已停止支持，.NET Core 3.0 也即将达到“终止支持日期”，至于有长期支持的 .NET Core 3.1，其支持范围可能不如同样为长期支持的 .NET Core 2.1，所以我们最终选择了 .NET Core 2.1.
-
-现有的 pmcenter 代码与 .NET Core 3.1 完全兼容，但无法利用其新特性 (如提前编译及 TLS 1.3 支持)。
-
-pmcenter 正在准备转向 .NET Core 3.1，请参考 [issue #25](https://github.com/Elepover/pmcenter/issues/25).
-
 ### 为什么我无法回复匿名转发的消息?
 
 请在 pmcenter 设置文件中启用 `EnableMsgLink` 选项。只有在 `EnableMsgLink` 选项启用后的转发的消息可以被回复。
+
+您无法回复在此选项处于禁用状态时被转发的消息，因为对应的消息链接不存在。
 
 如需更多信息，请参见[配置](#pmcenter-设置)部分。
 
@@ -322,4 +342,4 @@ pmcenter 正在准备转向 .NET Core 3.1，请参考 [issue #25](https://github
 
 很抱歉，但鉴于某些事件，我们实在不得不加入这个章节，以至于独立成一个 commit 来提交。
 
-本程序由 Apache License _(版本 2.0，依赖组件由 MIT License 授权)_ 授权。**不提供任何担保**。使用本程序即表明，您知情并同意：程序开发者不对此程序导致的任何服务中断、数据损失或任何少见未列出的事故负责。
+本程序由 Apache License _(版本 2.0，依赖组件由 MIT License 授权)_ 授权。**不提供任何担保**。使用本程序即表明，您知情并同意：程序开发者不对此程序或其任何相关代码导致的任何服务中断、数据损失或任何少见未列出的事故负责。

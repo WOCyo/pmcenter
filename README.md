@@ -1,6 +1,6 @@
 # pmcenter
 
-[![build status](https://ci.appveyor.com/api/projects/status/gmbdiackw0563980?svg=true)](https://ci.appveyor.com/project/Elepover/pmcenter) [![CodeFactor](https://www.codefactor.io/repository/github/elepover/pmcenter/badge)](https://www.codefactor.io/repository/github/elepover/pmcenter) [![telegram channel](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/pmcenter_devlog) ![license](https://img.shields.io/github/license/elepover/pmcenter.svg) ![language rank](https://img.shields.io/github/languages/top/elepover/pmcenter.svg?color=brightgreen) ![repo size in bytes](https://img.shields.io/github/repo-size/elepover/pmcenter.svg) ![environment](https://img.shields.io/badge/dotnet-v2.1-blue.svg) ![last commit](https://img.shields.io/github/last-commit/elepover/pmcenter.svg) ![status](https://img.shields.io/badge/status-maintaining-success.svg)
+[![build status](https://ci.appveyor.com/api/projects/status/gmbdiackw0563980?svg=true)](https://ci.appveyor.com/project/Elepover/pmcenter) [![CodeFactor](https://www.codefactor.io/repository/github/elepover/pmcenter/badge)](https://www.codefactor.io/repository/github/elepover/pmcenter) [![telegram channel](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/pmcenter_devlog) ![license](https://img.shields.io/github/license/elepover/pmcenter.svg) ![language rank](https://img.shields.io/github/languages/top/elepover/pmcenter.svg?color=brightgreen) ![repo size in bytes](https://img.shields.io/github/repo-size/elepover/pmcenter.svg) ![environment](https://img.shields.io/badge/dotnet-v3.1-blueviolet.svg) ![last commit](https://img.shields.io/github/last-commit/elepover/pmcenter.svg) ![status](https://img.shields.io/badge/status-maintaining-success.svg)
 
 A telegram bot helping you process private messages.
 
@@ -18,6 +18,7 @@ A telegram bot helping you process private messages.
 >   - [⚙️ Prerequisites](#prerequisites)
 >   - [📥 Build `pmcenter` Yourself](#build-pmcenter-yourself)
 >   - [📩 Use Pre-compiled Binaries](#use-pre-compiled-binaries)
+>   - [✅ ReadyToRun Version](#readytorun-version)
 >   - [🐋 Use Docker](#use-docker)
 > - [🔧 Configuring](#configuring)
 >   - [⚒️ `pmcenter` Settings](#pmcenter-settings)
@@ -65,29 +66,19 @@ The following content will guide you through the installation process.
 
 ### Prerequisites
 
-- Microsoft .NET Core (Runtime / SDK)
-- Git (optional, not needed if you uses the binaries)
+- Microsoft .NET Core 3.1 (Runtime / SDK, see instructions below)
+- Git (optional, see instructions below)
+- Yes! You can also [use Docker](#use-docker) to run pmcenter.
 
-For officially supported operating systems, see [here](https://see.wtf/XxTlf).
+Refer to [Microsoft](https://dotnet.microsoft.com/download/dotnet-core/3.1) for installation guides.
 
-For NOT officially supported operating systems, see [here](https://see.wtf/sIjUZ).
+Many Linux distributions have .NET Core SDK available as a package.
 
-For Arch Linux, there's an official package.
-
-For `Raspian` or other distributions based on `armv7` architecture, run this following script as `root`:
-
-```bash
-apt-get install curl libunwind8 gettext
-curl -sSL -o dotnet.tar.gz https://download.microsoft.com/download/9/1/7/917308D9-6C92-4DA5-B4B1-B4A19451E2D2/dotnet-runtime-2.1.0-linux-arm.tar.gz
-mkdir -p /opt/dotnet && sudo tar zxf dotnet.tar.gz -C /opt/dotnet
-ln -s /opt/dotnet/dotnet /usr/local/bin
-rm dotnet.tar.gz
-dotnet --info
-```
+Don't worry if your distribution doesn't have a package handy, you can still download binaries or [use pmcenter R2R version](#readytorun-version).
 
 ### Build `pmcenter` Yourself
 
-**You need to install .NET Core _SDK_ and _Runtime_ to finish this.**
+**You need to install .NET Core SDK to finish this.**
 
 Run this script to clone, build and initiate your own `pmcenter`:
 
@@ -95,18 +86,22 @@ Run this script to clone, build and initiate your own `pmcenter`:
 git clone https://github.com/Elepover/pmcenter.git --depth=1
 cd pmcenter/pmcenter
 dotnet restore
-dotnet publish --configuration Release
-cp -R bin/Release/netcoreapp2.1/publish ../
+dotnet publish -c Release
+cp -R bin/Release/netcoreapp3.1/publish ../
 cd .. && mv publish build
 cd build
 dotnet pmcenter.dll
 ```
 
+You can also use `./pmcenter` (macOS & Linux) or `.\pmcenter.exe` to launch pmcenter.
+
+Add `--setup` option when launching pmcenter to launch setup wizard.
+
 The compiled binaries will be put in the `pmcenter/build` folder in your working directory.
 
 ### Use Pre-compiled Binaries
 
-**Only .NET Core _Runtime_ is required in this step.**
+**Only .NET Core Runtime is required in this step.**
 
 Run this script to download and initiate your own `pmcenter`:
 
@@ -118,13 +113,33 @@ unzip pmcenter.zip
 dotnet pmcenter.dll
 ```
 
+### ReadyToRun Version
+
+It's another kind of pre-compiled binary bundle, except you will need: exactly NOTHING additional.
+
+Plus, Ahead-of-Time compilation is enabled, so do expect some performance increase using this edition.
+
+Drawback: automatic updates are NOT available.. yet. It'll be available later.
+
+For some Linux distributions, you may need some extra libraries installed, check out [this Microsoft documentation](https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?tabs=netcore31&pivots=os-linux) for more info.
+
+Steps:
+
+- [Download the correct version here](https://github.com/Elepover/pmcenter/releases) according to your OS and its architecture
+- Extract it
+- Run `./pmcenter` (macOS & Linux) or `.\pmcenter.exe` (Windows) and you're good to go!
+
 ### Use Docker
 
 The following snippet will help you download sample configurations for the pmcenter in docker to use.
 
+For `pmcenter-lazer`, use the `elep0ver/pmcenter:lazer` image
+
+For `pmcenter-lazer`, use the `elep0ver/pmcenter:lazer` image
+
 ```bash
 wget https://raw.githubusercontent.com/Elepover/pmcenter/master/pmcenter.json
-vim pmcenter.json # Edit the config
+vim pmcenter.json # Edit the configurations (APIKey and OwnerID are required)
 docker run -d -v $(pwd)/pmcenter.json:/opt/pmcenter/pmcenter.json --restart always elep0ver/pmcenter
 ```
 
@@ -142,6 +157,7 @@ Or, use setup wizard:
 
 | Key | Type | User Editable | Description |
 | :---- | :---- | :---- | ----:|
+| `Minify` | `Boolean`| ✓ | To minify pmcenter configurations or not. |
 | `APIKey` | `String`| ✓ | Your Telegram bot's API key. |
 | `OwnerID` | `Long` | ✓ | The owner's Telegram user ID. |
 | `EnableCc` | `Boolean` | ✓ | Decides whether cc feature is enabled or not. |
@@ -176,7 +192,13 @@ Or, use setup wizard:
 | `UpdateChannel` | `String` | ✓ | Choose which update channel you prefer to. |
 | `IgnoreKeyboardInterrupt` | `Boolean` | ✓ | Choose whether pmcenter should ignore Ctrl-C interrupts or not. |
 | `DisableNetCore3Check` | `Boolean` | ✓ | Turn this on to hide .NET Core Runtime version warnings. |
+| `DisableMessageLinkTip` | `Boolean` | ✓ | Turn this on to hide message link tip prompts. |
+| `AnalyzeStartupTime` | `Boolean` | ✓ | Turn this on to show detailed analysis of startup time. |
+| `SkipAPIKeyVerification` | `Boolean` | ✓ | Turn this on to skip API Key verification on startup. |
+| `EnableActions` | `Boolean` | ✓ | Turn this on to enable message actions. |
+| `CheckLangVersionMismatch` | `Boolean` | ✓ | Check language version and send alert on startup. |
 | `Statistics` | `Stats` | ✕ | Statistics data. |
+| `IgnoredLogModules` | `Array` | ✓ | List of ignored log modules. Selected modules will not generate output to console. |
 | `Socks5Proxies` | `Array` | ✓ | List of SOCKS5 proxies. |
 | `BannedKeywords` | `Array` | ✓ | Storage of banned keywords. |
 | `Banned` | `Array` | ✓ | Storage of banned users. |
@@ -199,7 +221,8 @@ Tip: After upgrades, you can send `/saveconf` command to the bot to fix missing 
 - **Emojis** are supported, and were used by default.
 - Currently the response of the `/info` command is unchangeable.
 - Familiar with another language? Pull requests are welcome!
-- Please think twice before turning on `EnableMsgLink`, it makes it possible for you to reply to messages that are forwarded anonymously or from channels, however, it will cost more and more of your storage space and memory as the storage grows and makes it slower for pmcenter to process configuration files.
+- ~~Please think twice before turning on `EnableMsgLink`, it makes it possible for you to reply to messages that are forwarded anonymously or from channels, however, it will cost more and more of your storage space and memory as the storage grows and makes it slower for pmcenter to process configuration files.~~
+- Now Message Links play an important role in pmcenter's basic functions. Turning it off is NOT recommended.
 
 #### Changing File Location
 
@@ -221,6 +244,8 @@ On these 3 scenarios, pmcenter will still use default location:
 After all these, you can start your own `pmcenter` safely by using this command:
 
 `dotnet pmcenter.dll`
+
+You can also use `./pmcenter` (macOS & Linux) or `.\pmcenter.exe` to launch pmcenter if you compiled it yourself or chose R2R version.
 
 You can write a `systemd service` to keep it running, even after the host machine's rebooting.
 
@@ -246,6 +271,7 @@ You can write a `systemd service` to keep it running, even after the host machin
 | `/backup` | Owner | Backup configurations. |
 | `/editconf <CONF>` | Owner | Manually edit configurations and translations w/ JSON-formatted text. |
 | `/saveconf` | Owner | Manually save configurations and translations. Useful after upgrades. |
+| `/autosave [off/interval]` | Owner | Enable/Disable autosave. Intervals are in milliseconds (1/1000 of a second). |
 | `/readconf` | Owner | Reload configurations without restarting bot. |
 | `/resetconf` | Owner | Reset configurations. |
 | `/uptime` | Owner | Get system uptime info. |
@@ -289,17 +315,11 @@ As is mentioned in issue [#33179](https://github.com/dotnet/corefx/issues/33179)
 
 ## FAQ
 
-### Why are you still targeting to .NET Core 2.1?
-
-According to [.NET Core Support Policy](https://dotnet.microsoft.com/platform/support/policy/dotnet-core), the .NET Core 2.2 is now EOL, .NET Core 3.0 is also approaching its _End of Support Date_. As for .NET Core 3.1, which has LTS support level, it may not be as widely supported as .NET Core 2.1 (which also has LTS support level). So we finally chose .NET Core 2.1.
-
-The existing pmcenter code is completely compatible with .NET Core 3.1, but will not take advantage of the new features (like AOT compilation and TLS 1.3 support).
-
-pmcenter is planning to move to .NET Core 3.1, see [issue #25](https://github.com/Elepover/pmcenter/issues/25).
-
 ### Why cannot I reply to anonymously forwarded messages?
 
 Please enable the `EnableMsgLink` option in pmcenter's configurations file. Only messages forwarded when `EnableMsgLink` option is turned on can be replied.
+
+You can NOT reply to the messages that were forwarded when `EnableMsgLink` option was disabled since their corresponding message links were missing.
 
 For more information, refer to the [configurations](#pmcenter-settings) part.
 
@@ -317,4 +337,4 @@ We also have a sample `systemd` service for you [here](https://github.com/Elepov
 
 ## Disclaimer
 
-The program is licensed under Apache License _(Version 2.0. Dependencies are licensed under MIT License)_ and comes with **ABSOLUTELY NO WARRANTY**. By using the program in any way, you acknowledge and confirm that the developer of the program is **NOT RESPONSIBLE** for service outage, data loss or any other rare unlisted incident caused by the program.
+The program is licensed under Apache License _(Version 2.0. Dependencies are licensed under MIT License)_ and comes with **ABSOLUTELY NO WARRANTY**. By using the program in any way, you acknowledge and confirm that the developer of the program is **NOT RESPONSIBLE** for service outage, data loss or any other rare unlisted incident caused by the program or any of its related code.
